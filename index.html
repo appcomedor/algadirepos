@@ -135,11 +135,12 @@
                         <div class="flex gap-2">
                             <select id="guarnicion" class="input-pro w-2/3 text-[11px] uppercase">
                                 <option value="" disabled selected>GUARNICIÓN</option>
-                                <option value="🍟 PATATAS FRITAS">🍟 PATATAS FRITAS</option>
-                                <option value="🥔 PATATAS COCIDAS">🥔 PATATAS COCIDAS</option>
+                                <option value="🍟 PATATAS FRITAS/DADO">🍟 PATATAS FRITAS</option>
+                                <option value="🥔 PATATAS COCIDAS/PANADERA">🥔 PATATAS COCIDAS</option>
                                 <option value="🥗 ENSALADA">🥗 ENSALADA</option>
                                 <option value="🥚 HUEVO FRITO">🥚 HUEVO FRITO</option>
                                 <option value="🍝 PASTA/ARROZ">🍝 PASTA/ARROZ</option>
+                                <option value="🍎 MANZANA AL CURRY">🍎 MANZANA AL CURRY</option>
                                 <option value="❌ NADA">❌ NADA</option>
                             </select>
                             <input type="text" id="postre" placeholder="POSTRE" class="input-pro w-1/3 text-[11px] uppercase">
@@ -149,9 +150,12 @@
                     <div id="form-desayuno" class="hidden grid grid-cols-3 gap-2">
                         <button onclick="toggleItem(this, 'Café')" class="breakfast-btn"><span>☕</span>Café</button>
                         <button onclick="toggleItem(this, 'Colacao')" class="breakfast-btn"><span>🍫</span>Colacao</button>
-                        <button onclick="toggleItem(this, 'Zumo')" class="breakfast-btn"><span>🍊</span>Zumo</button>
+                        <button onclick="toggleItem(this, 'Zumo de naranja')" class="breakfast-btn"><span>🍊</span>Zumo de naranja</button>
+                        <button onclick="toggleItem(this, 'Zumo de piña')" class="breakfast-btn"><span>🍍</span>Zumo de piña</button>
                         <button onclick="toggleItem(this, 'Tostadas')" class="breakfast-btn"><span>🍞</span>Tostada</button>
-                        <button onclick="toggleItem(this, 'Bollería')" class="breakfast-btn"><span>🥐</span>Bollería</button>
+                        <button onclick="toggleItem(this, 'Sandwich')" class="breakfast-btn"><span>🥖</span>Sandwich</button>
+                        <button onclick="toggleItem(this, 'Napolitana')" class="breakfast-btn"><span>🥐</span>Napolitana</button>
+                        <button onclick="toggleItem(this, 'Bollería')" class="breakfast-btn"><span>🍩</span>Bollería</button>
                         <button onclick="toggleItem(this, 'Cereales')" class="breakfast-btn"><span>🥣</span>Cereales</button>
                     </div>
 
@@ -250,15 +254,15 @@
     <script>
         // --- DATA STORE (Llave Final para evitar perdida) ---
         let db = JSON.parse(localStorage.getItem('algadi_universe_final')) || [];
-        let profile = JSON.parse(localStorage.getItem('algadi_u_profile')) || { name: 'Novato', avatar: '👶', xp: 0 };
+        let profile = JSON.parse(localStorage.getItem('algadi_u_profile')) || { name: 'Colegial de nuevo ingreso', avatar: '👶', xp: 0 };
         let r = 0;
         let bfItems = [];
 
         // --- RPG CONSTANTS ---
         const AVATARS = ['👶', '🧑‍🍳', '🥔', '🦖', '👽', '👑', '🐷', '🧛'];
         const RANKS = [
-            {xp:0, t:"Novato"}, {xp:150, t:"Aprendiz"}, {xp:400, t:"Guerrero"}, 
-            {xp:800, t:"Mago"}, {xp:1500, t:"Dios"}
+            {xp:0, t:"Colegial de nuevo ingreso"}, {xp:150, t:"Colegial de segundo"}, {xp:400, t:"Colegial de tercero"}, 
+            {xp:800, t:"Becado"}, {xp:1500, t:"Germán"}
         ];
 
         // --- INIT ---
@@ -390,7 +394,7 @@
             document.getElementById('patata-bar').style.width = `${pct}%`;
             
             const face = document.getElementById('patata-face');
-            if(pct > 50) { face.innerText = "🥔🔥"; face.classList.add('potato-danger'); } 
+            if(pct > 70) { face.innerText = "🥔🔥"; face.classList.add('potato-danger'); } 
             else { face.innerText = "🥔"; face.classList.remove('potato-danger'); }
 
             // Badges Pro Logic (FIXED PROGRESS)
@@ -398,11 +402,11 @@
             const lomos = db.filter(x => x.p2.includes('LOMO') || x.p1.includes('LOMO')).length;
             
             const badges = [
-                { id:1, t:"Primer Bocado", d:"Registra 1 comida", cur: db.length, max:1, i:"🌮" },
-                { id:2, t:"Cafeína Pura", d:"100 Cafés bebidos", cur: cafes, max:100, i:"☕" },
-                { id:3, t:"Mr. Potato", d:"50% Dieta Patata", cur: pct, max:50, i:"🥔" },
+                { id:1, t:"Primer Trauma", d:"Registra 1 comida", cur: db.length, max:1, i:"🌮" },
+                { id:2, t:"Buenos días, café con leche?", d:"100 Cafés bebidos", cur: cafes, max:100, i:"☕" },
+                { id:3, t:"Mr. Potato", d:"70% Dieta Patata", cur: pct, max:70, i:"🥔" },
                 { id:4, t:"Adobado", d:"20 Lomos comidos", cur: lomos, max:20, i:"🥩" },
-                { id:5, t:"Gourmet", d:"Pon un 5 estrellas", cur: db.some(x=>x.r===5)?1:0, max:1, i:"⭐" },
+                { id:5, t:"Algadi Premium", d:"Pon un 5 estrellas", cur: db.some(x=>x.r===5)?1:0, max:1, i:"⭐" },
                 { id:6, t:"Superviviente", d:"Pon un 1 estrella", cur: db.some(x=>x.r===1)?1:0, max:1, i:"🤢" }
             ];
 
@@ -441,7 +445,7 @@
         }
         function saveProfile() { profile.name = document.getElementById('profile-name-input').value; save(); }
         function showOracle() {
-            const m = ["La patata te observa.", "Digestión inminente.", "Has ganado XP.", "El chef aprueba esto.", "¿Otra vez lomo?", "Buen provecho."];
+            const m = ["La patata te observa.", "Indigestión inminente.", "Recibes 1 indigestión por participar en esta actividad", "9 de cada 10 mecánicos recomiendan los san aceites", "¿Otra vez lomo?", "Algadio Rodríguez aprueba esto"];
             document.getElementById('oracle-msg').innerText = m[Math.floor(Math.random()*m.length)];
             document.getElementById('oracle').classList.remove('hidden');
         }
