@@ -3,600 +3,652 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Algadi Universe</title>
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Algadi Universe v4.0</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    
     <style>
-        :root { --bg: #f8fafc; --accent: #10b981; }
-        body { background-color: var(--bg); color: #0f172a; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; padding-bottom: 140px; }
-
-        /* ANIMACIONES */
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
-        @keyframes pop { 0% { transform: scale(0.95); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
-        .anim-float { animation: float 3s ease-in-out infinite; }
-
-        /* UI ELEMENTS */
-        .glass-panel { 
-            background: rgba(255, 255, 255, 0.9); 
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.8); 
-            box-shadow: 0 8px 32px -10px rgba(0, 0, 0, 0.05);
-            border-radius: 24px;
-        }
-
-        /* LIQUID NAVBAR */
-        .liquid-nav {
-            position: fixed; bottom: 24px; left: 20px; right: 20px;
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(25px) saturate(180%);
-            -webkit-backdrop-filter: blur(25px) saturate(180%);
-            border: 1px solid rgba(255, 255, 255, 0.6);
-            border-radius: 30px;
-            padding: 8px;
-            box-shadow: 0 15px 35px -10px rgba(0,0,0,0.1);
-            z-index: 50; display: flex; justify-content: space-around;
-        }
-        .nav-item { padding: 12px; border-radius: 20px; transition: all 0.3s; width: 33%; text-align: center; color: #94a3b8; }
-        .nav-item.active { background: #0f172a; color: white; transform: translateY(-4px); box-shadow: 0 8px 20px -5px rgba(15, 23, 42, 0.3); }
-        .nav-icon { font-size: 20px; display: block; margin-bottom: 2px; }
-        .nav-label { font-size: 9px; font-weight: 800; text-transform: uppercase; }
-
-        /* INPUTS & BUTTONS */
-        .input-pro { background: #f1f5f9; border: 2px solid transparent; border-radius: 18px; padding: 14px; font-weight: 700; color: #334155; width: 100%; transition: 0.2s; font-size: 12px; }
-        .input-pro:focus { background: white; border-color: var(--accent); box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1); outline: none; }
+        :root { --bg: #f8fafc; --accent: #3b82f6; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg); color: #1e293b; transition: all 0.5s ease; padding-bottom: 120px; -webkit-tap-highlight-color: transparent; }
         
-        .btn-main { 
-            background: linear-gradient(135deg, #10b981 0%, #047857 100%); 
-            color: white; border-radius: 20px; font-weight: 800; letter-spacing: 1px;
-            box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.4); 
-            transition: transform 0.1s; 
-        }
-        .btn-main:active { transform: scale(0.97); }
+        /* TEMAS DINÁMICOS POR RANGO (Versión Premium v3) */
+        /* Novato: Azul Eléctrico, vibrante y moderno */
+        body[data-rank="0"] { --accent: #2563eb; --bg: #eff6ff; } 
+        
+        /* Iniciado: Cian Eléctrico, energía pura */
+        body[data-rank="1"] { --accent: #06b6d4; --bg: #ecfeff; } 
+        
+        /* Veterano: Violeta Real, estilo premium */
+        body[data-rank="2"] { --accent: #8b5cf6; --bg: #f5f3ff; } 
+        
+        /* Elite: Rosa Neón, potencia visual máxima */
+        body[data-rank="3"] { --accent: #f43f5e; --bg: #fff1f2; } 
+        
+        /* Leyenda: Oro Ambarino, el color del éxito */
+        body[data-rank="4"] { --accent: #d97706; --bg: #fffbeb; }
 
-        /* PATATÓMETRO */
-        .patata-container {
-            background: radial-gradient(circle at 30% 30%, #fefce8, #fef08a);
-            border: 4px solid #fde047; position: relative; overflow: hidden;
-        }
-        .potato-face { font-size: 80px; position: absolute; right: -10px; bottom: -20px; filter: drop-shadow(0 10px 10px rgba(234, 179, 8, 0.4)); transition: 0.3s; }
-        .potato-danger { animation: float 0.5s infinite; filter: hue-rotate(-20deg); }
+        .glass { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.4); border-radius: 24px; }
+        .btn-primary { background: var(--accent); color: white; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); border-radius: 16px; font-weight: 800; transition: 0.2s; }
+        .btn-primary:active { transform: scale(0.95); }
 
-        /* BADGES */
-        .badge-card {
-            background: white; border: 1px solid #e2e8f0; border-radius: 20px; padding: 12px;
-            display: flex; flex-direction: column; gap: 8px; transition: 0.3s; position: relative; overflow: hidden;
-        }
-        .badge-card.locked { opacity: 0.6; grayscale: 1; background: #f8fafc; }
-        .badge-card.unlocked { border-color: #fbbf24; background: linear-gradient(to bottom right, #fff, #fffbeb); box-shadow: 0 10px 20px -5px rgba(251, 191, 36, 0.15); }
-        .progress-track { height: 6px; background: #e2e8f0; border-radius: 10px; overflow: hidden; }
-        .progress-fill { height: 100%; background: #94a3b8; transition: 1s; }
-        .unlocked .progress-fill { background: #fbbf24; }
+        /* PATATOMETRO VIVO */
+        @keyframes shake { 0%, 100% { transform: translate(0,0); } 20% { transform: translate(-2px, 1px); } 40% { transform: translate(2px, -1px); } 60% { transform: translate(-1px, -2px); } 80% { transform: translate(1px, 2px); } }
+        .danger-potato { animation: shake 0.3s infinite; border: 2px solid #ef4444 !important; background: #fff1f1 !important; }
+        .pulse-orange { animation: pulse-custom 2s infinite; }
+        @keyframes pulse-custom { 0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(245, 158, 11, 0); } 100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); } }
 
-        /* TICKET */
-        .ticket {
-            background: white; margin-bottom: 16px; position: relative;
-            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.03));
-            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 10px), 95% 100%, 90% calc(100% - 10px), 85% 100%, 80% calc(100% - 10px), 75% 100%, 70% calc(100% - 10px), 65% 100%, 60% calc(100% - 10px), 55% 100%, 50% calc(100% - 10px), 45% 100%, 40% calc(100% - 10px), 35% 100%, 30% calc(100% - 10px), 25% 100%, 20% calc(100% - 10px), 15% 100%, 10% calc(100% - 10px), 5% 100%, 0 calc(100% - 10px));
-            padding-bottom: 20px;
-        }
+        /* LOGROS (BADGES) */
+        .badge-card { background: white; padding: 12px; border-radius: 20px; border: 1px solid #e2e8f0; transition: 0.3s; }
+        .badge-card.locked { opacity: 0.5; filter: grayscale(1); }
+        .badge-card.unlocked { border-color: var(--accent); background: white; box-shadow: 0 10px 20px -5px rgba(0,0,0,0.05); }
+        .badge-progress { height: 4px; background: #f1f5f9; border-radius: 10px; overflow: hidden; margin-top: 8px; }
+        .badge-bar { height: 100%; background: var(--accent); transition: width 0.5s; }
 
-        .tab-content { display: none; }
-        .tab-content.active { display: block; animation: pop 0.4s ease; }
-
-        .breakfast-btn { background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 16px; padding: 12px; font-size: 10px; font-weight: 700; color: #64748b; transition: 0.2s; display: flex; flex-direction: column; align-items: center; gap: 4px; }
-        .breakfast-btn.selected { background: #ecfdf5; border-color: var(--accent); color: #047857; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15); }
-
-        .rating-container { display: flex; justify-content: center; gap: 8px; }
-        .star-label { font-size: 2rem; color: #e2e8f0; cursor: pointer; transition: 0.2s; }
-        .star-label.active { color: #fbbf24; transform: scale(1.1); filter: drop-shadow(0 0 5px rgba(251, 191, 36, 0.5)); }
+        /* NAVEGACIÓN */
+        .nav-bar { position: fixed; bottom: 20px; left: 20px; right: 20px; display: flex; justify-content: space-around; padding: 12px; z-index: 100; }
+        .nav-item { color: #94a3b8; transition: 0.3s; padding: 10px 20px; border-radius: 15px; }
+        .nav-item.active { background: var(--accent); color: white; }
 
         /* LEVEL & RANKS */
         .rank-item { display: flex; gap: 12px; margin-bottom: 16px; position: relative; }
         .rank-line { position: absolute; left: 24px; top: 40px; bottom: -20px; width: 2px; background: #e2e8f0; z-index: 0; }
         .rank-item:last-child .rank-line { display: none; }
-        .rank-icon { width: 48px; height: 48px; border-radius: 16px; background: #f1f5f9; display: flex; align-items: center; justify-content: center; font-size: 24px; z-index: 10; position: relative; border: 2px solid white; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .rank-icon { width: 48px; height: 48px; border-radius: 16px; background: #f1f5f9; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 800; z-index: 10; position: relative; border: 2px solid white; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
         .rank-content { flex: 1; padding: 12px; background: white; border-radius: 16px; border: 1px solid #e2e8f0; }
         
         .rank-item.locked { opacity: 0.5; filter: grayscale(1); }
-        .rank-item.current .rank-icon { background: #10b981; color: white; border-color: #059669; box-shadow: 0 0 0 4px rgba(16,185,129,0.2); }
-        .rank-item.current .rank-content { border-color: #10b981; background: #ecfdf5; }
-        .rank-item.unlocked .rank-icon { background: #d1fae5; color: #059669; }
+        .rank-item.current .rank-icon { background:var( --accent); color: white; border-color: var( --accent); box-shadow: 0 0 0 4px rgba(16,185,129,0.2); }
+        .rank-item.current .rank-content { border-color: var( --accent); background: #ecfdf5; }
+        .rank-item.unlocked .rank-icon { background: #d1fae5; color: var( --accent); }
 
-        /* HEADER XP BAR */
-        #header-xp {
-            transition: width 1s ease-in-out, background 1s ease;
-        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: slideUp 0.3s ease-out; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+        .bf-btn { border: 2px solid #e2e8f0; border-radius: 12px; padding: 10px; font-size: 11px; font-weight: 800; background: white; }
+        .bf-btn.selected { border-color: var(--accent); background: var(--bg); color: var(--accent); }
+
+        /* Estilos Patatómetro™ Clásico */
+        .patata-container { background: linear-gradient(135deg, #fefce8 0%, #fef3c7 100%); position: relative; overflow: hidden; transition: all 0.3s ease; }
+        .potato-face { position: absolute; bottom: -15px; right: -15px; font-size: 100px; opacity: 0.15; transform: rotate(15deg); pointer-events: none; transition: all 0.3s ease; }
+        
+        /* Alarma: Vibración solo lateral y vertical (sin inclinación) */
+        .danger-potato { animation: shake-straight 0.3s infinite; border: 2px solid #ef4444 !important; background: #fee2e2 !important; }
+        .danger-potato .potato-face { opacity: 0.4; }
+
+        @keyframes shake-straight { 
+            0%, 100% { transform: translate(0,0) rotate(0deg); } 
+            20% { transform: translate(-3px, 0); } 
+            40% { transform: translate(3px, 0); } 
+            60% { transform: translate(-3px, 1px); } 
+            80% { transform: translate(3px, -1px); } 
+        } 
     </style>
 </head>
-<body class="max-w-lg mx-auto">
+<body data-rank="0">
 
-    <div class="pt-10 px-6 mb-6 flex justify-between items-center animate-in fade-in slide-in-from-top-4">
-        <div onclick="openProfile()" class="flex items-center gap-4 cursor-pointer">
-            <div id="header-avatar" class="w-14 h-14 bg-white rounded-2xl flex items-center justify-center text-3xl shadow-lg border border-slate-100 anim-float"></div>
-            <div>
-                <p class="text-[10px] font-black uppercase text-slate-400 tracking-widest">BIENVENIDO,</p>
-                <h1 id="header-name" class="text-xl font-extrabold text-slate-800 leading-none truncate max-w-[180px]">...</h1>
-                
-                <div onclick="showLevelMenu(); event.stopPropagation()" class="flex items-center gap-1 mt-1 cursor-pointer hover:opacity-80 transition group">
-                    <div class="h-2 w-24 bg-slate-200 rounded-full overflow-hidden border border-slate-100 shadow-inner">
-                        <div id="header-xp" class="h-full w-0"></div>
+    <header class="p-6 pb-2">
+        <div class="flex justify-between items-center mb-4">
+            <div class="flex items-center gap-3">
+                <div id="main-avatar" onclick="setTab('perfil')" class="w-12 h-12 glass shadow-sm flex items-center justify-center text-2xl cursor-pointer border-2 border-white">👶</div>
+                <div>
+                    <h2 id="display-name" class="font-black text-slate-800 leading-tight uppercase text-sm">USER</h2>
+                    <div onclick="openRankMenu()" class="flex items-center gap-2 mt-1 cursor-pointer hover:opacity-70 transition">
+                        <div class="h-2 w-24 bg-slate-200 rounded-full overflow-hidden">
+                            <div id="xp-bar" class="h-full bg-blue-500 transition-all duration-700" style="width: 0%"></div>
+                            <div id="xp-bar" class="h-full transition-all duration-700" style="width: 0%"></div>
+                        </div>
+                        <span id="rank-name" class="text-[9px] font-black uppercase text-blue-600">Novato</span>
                     </div>
-                    <span id="header-lvl" class="text-[9px] font-bold text-indigo-500 group-hover:scale-110 transition-transform">LVL 1</span>
                 </div>
             </div>
+            <div class="bg-orange-500 text-white px-3 py-1.5 rounded-2xl font-black text-[10px] shadow-lg pulse-orange flex items-center gap-1">
+                <span class="material-icons-round text-xs">local_fire_department</span> <span id="streak-val">0</span> DÍAS
+            </div>
         </div>
-    </div>
+        <div id="buff-bar" class="flex gap-2 px-1"></div>
+    </header>
 
-    <div id="content-area">
+    <section class="px-6 mb-6">
+        <div class="bg-slate-900 rounded-3xl p-4 text-white relative overflow-hidden shadow-xl">
+            <div class="absolute right-[-5px] top-[-5px] text-5xl opacity-20">🔮</div>
+            <p class="text-[8px] font-black opacity-50 uppercase tracking-widest mb-1">El Oráculo de Algadi</p>
+            <p id="oracle-msg" class="text-xs font-bold italic leading-tight">Analizando patrones gastronómicos...</p>
+        </div>
+    </section>
+
+    <main class="px-6">
         
-        <main id="tab-registro" class="tab-content active px-5">
-            <div class="glass-panel p-6 mb-8 relative">
+        <div id="tab-registro" class="tab-content active">
+            <div class="glass p-5 shadow-xl mb-6">
                 <div class="space-y-4">
-                    <select id="turno" onchange="toggleForm()" class="input-pro border-emerald-500/20 text-emerald-800 bg-emerald-50/50">
-                        <option value="☀️ Comida">☀️ Comida (+10 XP)</option>
-                        <option value="🌙 Cena">🌙 Cena (+15 XP)</option>
-                        <option value="☕ Desayuno">☕ Desayuno (+5 XP)</option>
+                    <select id="turno" onchange="toggleTurno()" class="w-full bg-slate-100 border-none rounded-2xl p-4 font-black text-xs uppercase outline-none">
+                        <option value="☀️ Comida">☀️ Comida</option>
+                        <option value="🌙 Cena">🌙 Cena</option>
+                        <option value="☕ Desayuno">☕ Desayuno</option>
                     </select>
 
                     <div id="form-comida" class="space-y-3">
-                        <input type="text" id="primero" placeholder="1º PLATO" class="input-pro uppercase">
-                        <input type="text" id="segundo" placeholder="2º PLATO" class="input-pro uppercase">
                         <div class="flex gap-2">
-                            <select id="guarnicion" class="input-pro w-2/3 text-[11px] uppercase">
+                            <input type="text" id="p1" placeholder="1er PLATO" class="flex-1 bg-slate-50 p-4 rounded-2xl font-bold text-xs uppercase outline-none border-2 border-transparent focus:border-blue-300">
+                            <label class="w-14 bg-blue-50 border-2 border-dashed border-blue-200 rounded-2xl flex items-center justify-center cursor-pointer text-blue-500">
+                                <span class="material-icons-round">photo_camera</span>
+                                <input type="file" accept="image/*" capture="environment" class="hidden" onchange="handlePhoto(event)">
+                            </label>
+                        </div>
+                        <input type="text" id="p2" placeholder="2do PLATO" class="w-full bg-slate-50 p-4 rounded-2xl font-bold text-xs uppercase outline-none">
+                        <div class="grid grid-cols-2 gap-2">
+                            <select id="guarnicion" class="bg-slate-50 p-3 rounded-xl font-bold text-[10px] uppercase outline-none">
                                 <option value="" disabled selected>GUARNICIÓN</option>
-                                <option value="🍟 PATATAS FRITAS/DADO">🍟 PATATAS FRITAS</option>
-                                <option value="🥔 PATATAS COCIDAS/PANADERA">🥔 PATATAS COCIDAS</option>
+                                <option value="🍟 PATATAS FRITAS/DADO">🍟 PATATAS FRITAS/DADO</option>
+                                <option value="🥔 PATATAS COCIDAS/PANADERA">🥔 PATATAS COCIDAS/AL HORNO</option>
                                 <option value="🥗 ENSALADA">🥗 ENSALADA</option>
                                 <option value="🥚 HUEVO FRITO">🥚 HUEVO FRITO</option>
                                 <option value="🍝 PASTA/ARROZ">🍝 PASTA/ARROZ</option>
                                 <option value="🍎 MANZANA AL CURRY">🍎 MANZANA AL CURRY</option>
                                 <option value="❌ NADA">❌ NADA</option>
                             </select>
-                            <input type="text" id="postre" placeholder="POSTRE" class="input-pro w-1/3 text-[11px] uppercase">
+                            <input type="text" id="postre" placeholder="POSTRE" class="bg-slate-50 p-3 rounded-xl font-bold text-[10px] uppercase outline-none">
+                        </div>
+                        <div id="photo-preview-box" class="hidden relative">
+                            <img id="photo-img" class="w-full h-32 object-cover rounded-2xl border-2 border-white shadow-md">
+                            <button onclick="clearPhoto()" class="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center">×</button>
                         </div>
                     </div>
 
-                    <div id="form-desayuno" class="hidden grid grid-cols-3 gap-2">
-                        <button onclick="toggleItem(this, 'Café')" class="breakfast-btn"><span>☕</span>Café</button>
-                        <button onclick="toggleItem(this, 'Colacao')" class="breakfast-btn"><span>🍫</span>Colacao</button>
-                        <button onclick="toggleItem(this, 'Zumo de naranja')" class="breakfast-btn"><span>🍊</span>Zumo Naranja</button>
-                        <button onclick="toggleItem(this, 'Zumo de piña')" class="breakfast-btn"><span>🍍</span>Zumo Piña</button>
-                        <button onclick="toggleItem(this, 'Tostadas')" class="breakfast-btn"><span>🍞</span>Tostada</button>
-                        <button onclick="toggleItem(this, 'Sandwich')" class="breakfast-btn"><span>🥖</span>Sandwich</button>
-                        <button onclick="toggleItem(this, 'Napolitana')" class="breakfast-btn"><span>🥐</span>Napolitana</button>
-                        <button onclick="toggleItem(this, 'Bollería')" class="breakfast-btn"><span>🍩</span>Bollería</button>
-                        <button onclick="toggleItem(this, 'Cereales')" class="breakfast-btn"><span>🥣</span>Cereales</button>
+                    <div id="form-desayuno" class="hidden grid grid-cols-3 gap-2"></div>
+
+                    <div class="flex justify-center gap-4 py-2" id="star-rating">
+                        <span onclick="setRate(1)" class="material-icons-round text-3xl text-slate-200 cursor-pointer">star</span>
+                        <span onclick="setRate(2)" class="material-icons-round text-3xl text-slate-200 cursor-pointer">star</span>
+                        <span onclick="setRate(3)" class="material-icons-round text-3xl text-slate-200 cursor-pointer">star</span>
+                        <span onclick="setRate(4)" class="material-icons-round text-3xl text-slate-200 cursor-pointer">star</span>
+                        <span onclick="setRate(5)" class="material-icons-round text-3xl text-slate-200 cursor-pointer">star</span>
                     </div>
 
-                    <div class="flex justify-center border-t border-slate-100 pt-4">
-                        <div class="rating-container">
-                            <span class="star-label" onclick="rate(1)" id="star-1">★</span>
-                            <span class="star-label" onclick="rate(2)" id="star-2">★</span>
-                            <span class="star-label" onclick="rate(3)" id="star-3">★</span>
-                            <span class="star-label" onclick="rate(4)" id="star-4">★</span>
-                            <span class="star-label" onclick="rate(5)" id="star-5">★</span>
-                        </div>
-                    </div>
-                    <p class="text-center text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-[-5px]">Valoración (Opcional)</p>
-
-                    <button onclick="guardar()" class="btn-main w-full py-4 text-xs uppercase shadow-lg shadow-emerald-500/30">Imprimir Ticket</button>
+                    <button onclick="guardar()" class="btn-primary w-full py-4 uppercase text-xs tracking-widest flex items-center justify-center gap-2">
+                        <span class="material-icons-round">add_task</span> Registrar Ticket
+                    </button>
                 </div>
             </div>
-            <div id="historial" class="space-y-4 pb-10"></div>
-        </main>
+            <h3 class="text-[10px] font-black text-slate-400 uppercase mb-3 ml-2">Últimos Registros</h3>
+            <div id="historial" class="space-y-3 pb-10"></div>
+        </div>
 
-        <main id="tab-stats" class="tab-content px-5">
-            <div class="patata-container rounded-3xl p-6 mb-6 shadow-xl shadow-yellow-500/10">
-                <h3 class="text-[10px] font-black uppercase text-yellow-700 tracking-widest mb-1">Patatómetro™</h3>
-                <div class="flex items-end gap-1">
-                    <span id="patata-val" class="text-5xl font-black text-yellow-900 leading-none">0</span>
-                    <span class="text-lg font-bold text-yellow-600 mb-1">%</span>
-                </div>
-                <p class="text-[10px] font-bold text-yellow-800/60 uppercase mt-2">Nivel de almidón</p>
-                <div class="w-full bg-white/50 h-3 rounded-full mt-4 overflow-hidden border border-yellow-500/20">
-                    <div id="patata-bar" class="h-full bg-yellow-500 transition-all duration-1000 w-0"></div>
-                </div>
-                <div id="patata-face" class="potato-face">🥔</div>
-            </div>
+       <main id="tab-stats" class="tab-content px-5">
+    <div class="bg-white p-2 rounded-2xl mb-6 shadow-sm border flex items-center gap-2 mt-4">
+        <span class="material-icons-round text-slate-300 ml-2">search</span>
+        <input type="text" oninput="buscar(this.value)" placeholder="BUSCAR PLATO..." class="w-full p-2 outline-none font-bold text-xs uppercase">
+    </div>
+    <div id="search-results" class="mb-6 hidden"></div>
 
-            <h3 class="text-[10px] font-black uppercase text-slate-400 mb-4 ml-1">Medallero Algadi</h3>
-            <div id="badges-grid" class="grid grid-cols-2 gap-3 pb-20"></div>
-        </main>
-
-        <main id="tab-perfil" class="tab-content px-5">
-            <div class="glass-panel p-8 text-center mb-6">
-                <div onclick="cycleAvatar()" class="w-24 h-24 bg-slate-100 rounded-full mx-auto mb-4 flex items-center justify-center text-5xl cursor-pointer shadow-inner border-4 border-white">
-                    <span id="profile-avatar-display">👶</span>
-                </div>
-                <p class="text-[9px] font-bold text-slate-400 uppercase mb-2">Toca para cambiar</p>
-                <input type="text" id="profile-name-input" onchange="saveProfile()" class="text-center bg-transparent text-xl font-black text-slate-800 border-b-2 border-slate-200 focus:border-emerald-500 outline-none w-full" placeholder="TU NOMBRE">
-                
-                <div class="mt-6 flex justify-center gap-4 text-xs font-mono text-slate-500">
-                    <div>
-                        <div class="font-bold text-slate-800 text-lg" id="stat-total-tickets">0</div>
-                        <div>TICKETS</div>
-                    </div>
-                    <div class="w-px bg-slate-200"></div>
-                    <div>
-                        <div class="font-bold text-slate-800 text-lg" id="stat-total-xp">0</div>
-                        <div>XP TOTAL</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="glass-panel p-6 space-y-3">
-                <h3 class="text-[10px] font-black uppercase text-slate-400 mb-2">Sistema</h3>
-                <button onclick="exportCSV()" class="w-full bg-slate-800 text-white py-3 rounded-xl font-bold text-xs">EXPORTAR CSV</button>
-                <label class="block w-full bg-white border border-slate-200 py-3 rounded-xl font-bold text-xs text-center text-slate-500 cursor-pointer">
-                    IMPORTAR CSV
-                    <input type="file" accept=".csv" class="hidden" onchange="importCSV(event)">
-                </label>
-                <button onclick="nuke()" class="w-full text-red-400 py-2 text-[9px] font-black uppercase">Borrar Partida</button>
-            </div>
-        </main>
-
+    <div id="patata-card" class="patata-container rounded-3xl p-6 mb-4 shadow-xl shadow-yellow-500/10 border-2 border-transparent">
+        <h3 class="text-[10px] font-black uppercase text-yellow-700 tracking-widest mb-1">Patatómetro™</h3>
+        <div class="flex items-end gap-1">
+            <span id="patata-val" class="text-5xl font-black text-yellow-900 leading-none">0</span>
+            <span class="text-lg font-bold text-yellow-600 mb-1">%</span>
+        </div>
+        <p class="text-[10px] font-bold text-yellow-800/60 uppercase mt-2">Nivel de almidón</p>
+        <div class="w-full bg-white/50 h-3 rounded-full mt-4 overflow-hidden border border-yellow-500/20">
+            <div id="patata-bar" class="h-full bg-yellow-500 transition-all duration-1000 w-0"></div>
+        </div>
+        <div id="patata-face" class="potato-face">🥔</div>
     </div>
 
-    <nav class="liquid-nav">
-        <div onclick="switchTab('registro')" id="nav-registro" class="nav-item active">
-            <span class="nav-icon">🧾</span>
-            <div class="nav-label">Ticket</div>
+    <div id="patata-warn" class="hidden bg-red-100 text-red-700 p-4 rounded-2xl mb-6 flex items-center gap-3 border border-red-200 animate-pulse">
+        <span class="material-icons-round">warning</span>
+        <p class="text-[10px] font-black uppercase">¡ALERTA! Nivel crítico de patata detectado</p>
+    </div>
+
+    <h3 class="text-[10px] font-black text-slate-400 uppercase mb-3 ml-2">Hitos Gastronómicos</h3>
+    <div id="achievements-grid" class="grid grid-cols-2 gap-3 mb-10"></div>
+</main>
+        <div id="tab-perfil" class="tab-content text-center">
+            <div class="glass p-8 mb-6">
+                <div onclick="cambiarAvatar()" class="w-24 h-24 bg-white rounded-3xl mx-auto mb-4 flex items-center justify-center text-5xl shadow-lg border-4 border-slate-50 cursor-pointer">
+                    <span id="p-avatar">👶</span>
+                </div>
+                <input type="text" id="p-name" onchange="saveProfileName()" class="text-center font-black text-2xl uppercase outline-none bg-transparent w-full">
+                <p id="p-rank-label" class="text-[10px] font-bold opacity-40 uppercase mt-1">Novato</p>
+                
+                <div class="flex justify-around mt-8">
+                    <div><p id="st-total" class="text-xl font-black">0</p><p class="text-[8px] font-bold opacity-40 uppercase">Tickets</p></div>
+                    <div><p id="st-xp" class="text-xl font-black">0</p><p class="text-[8px] font-bold opacity-40 uppercase">XP Total</p></div>
+                </div>
+
+                <button onclick="generarCarta()" class="mt-8 bg-slate-800 text-white text-[10px] font-black px-6 py-4 rounded-2xl uppercase flex items-center gap-2 mx-auto">
+                    <span class="material-icons-round text-sm">share</span> Generar Carta de Duelo
+                </button>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+                <button onclick="exportar()" class="bg-white border p-3 rounded-xl text-[9px] font-black uppercase">Exportar</button>
+                <label class="bg-white border p-3 rounded-xl text-[9px] font-black uppercase text-center cursor-pointer">
+                    Importar <input type="file" accept=".json,.txt" class="hidden" onchange="importar(event)">
+                </label>
+                <button onclick="nuke()" class="bg-red-50 border border-red-100 p-3 rounded-xl text-[9px] font-black text-red-400 uppercase col-span-2">Borrar Todo</button>
+            </div>
         </div>
-        <div onclick="switchTab('stats')" id="nav-stats" class="nav-item">
-            <span class="nav-icon">🏆</span>
-            <div class="nav-label">Logros</div>
-        </div>
-        <div onclick="switchTab('perfil')" id="nav-perfil" class="nav-item">
-            <span class="nav-icon">⚙️</span>
-            <div class="nav-label">Perfil</div>
-        </div>
+    </main>
+
+    <nav class="nav-bar glass shadow-2xl">
+        <button onclick="setTab('registro')" id="nav-registro" class="nav-item active"><span class="material-icons-round">restaurant</span></button>
+        <button onclick="setTab('stats')" id="nav-stats" class="nav-item"><span class="material-icons-round">insights</span></button>
+        <button onclick="setTab('perfil')" id="nav-perfil" class="nav-item"><span class="material-icons-round">person</span></button>
     </nav>
 
-    <div id="setup-modal" class="fixed inset-0 z-[150] hidden flex items-center justify-center bg-slate-900/80 backdrop-blur-md p-6">
-        <div class="glass-panel w-full max-w-sm p-8 text-center animate-pop shadow-2xl">
-            <div class="text-4xl mb-4">👋</div>
-            <h2 class="text-2xl font-black text-slate-800 mb-2">¡Hola!</h2>
-            <p class="text-sm text-slate-500 mb-8">Antes de empezar a fichar en el comedor, necesito saber quién eres.</p>
-            
-            <div class="mb-8">
-                <div onclick="setupCycleAvatar()" class="w-24 h-24 bg-white rounded-3xl mx-auto mb-4 flex items-center justify-center text-5xl cursor-pointer shadow-lg border-2 border-emerald-100 hover:scale-105 transition">
-                    <span id="setup-avatar-display">👶</span>
+    <div id="modal-ranks" class="fixed inset-0 bg-slate-900/90 z-[200] hidden flex items-center justify-center p-6" onclick="this.classList.add('hidden')">
+        <div class="bg-white rounded-[32px] w-full max-w-sm p-6 overflow-hidden" onclick="event.stopPropagation()">
+            <h2 class="font-black text-xl mb-6">Escala de sufrimiento</h2>
+            <div id="ranks-list"></div>
+            <button onclick="document.getElementById('modal-ranks').classList.add('hidden')" class="mt-6 w-full p-4 bg-slate-100 rounded-2xl font-black text-xs uppercase">Cerrar</button>
+        </div>
+    </div>
+
+    <div id="modal-card" class="fixed inset-0 bg-black/95 z-[300] hidden flex flex-col items-center justify-center p-6" onclick="this.classList.add('hidden')">
+        <div id="card-capture" class="w-[300px] h-[450px] bg-slate-900 rounded-[30px] p-6 text-white flex flex-col items-center border-4 border-blue-500 relative overflow-hidden">
+            <div class="absolute top-[-50px] left-[-50px] w-32 h-32 bg-blue-500/20 blur-3xl"></div>
+            <div class="text-[9px] font-black tracking-[0.3em] text-blue-400 mb-6 uppercase">Algadi Legends</div>
+            <div class="text-7xl mb-4" id="c-avatar">👶</div>
+            <h2 id="c-name" class="text-2xl font-black uppercase mb-1">USER</h2>
+            <p id="c-rank" class="text-[10px] font-bold text-blue-400 uppercase tracking-widest mb-8">Novato</p>
+            <div class="w-full grid grid-cols-2 gap-3 mb-6">
+                <div class="bg-white/5 p-3 rounded-2xl text-center border border-white/10">
+                    <p id="c-streak" class="text-xl font-black text-orange-400">0</p>
+                    <p class="text-[8px] opacity-40 uppercase">Racha</p>
                 </div>
-                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Toca el avatar</p>
+                <div class="bg-white/5 p-3 rounded-2xl text-center border border-white/10">
+                    <p id="c-xp" class="text-xl font-black text-blue-400">0</p>
+                    <p class="text-[8px] opacity-40 uppercase">XP</p>
+                </div>
             </div>
-
-            <input type="text" id="setup-name" class="input-pro text-center text-lg mb-6 uppercase" placeholder="¿CÓMO TE LLAMAS?">
-            
-            <button onclick="finishSetup()" class="btn-main w-full py-4 text-sm shadow-xl shadow-emerald-500/20">
-                EMPEZAR
-            </button>
+            <div class="w-full bg-blue-600/20 p-4 rounded-2xl text-center border border-blue-500/30">
+                <p id="c-patata" class="text-3xl font-black text-yellow-400">0%</p>
+                <p class="text-[8px] opacity-60 uppercase">Nivel de Patata</p>
+            </div>
         </div>
+        <p class="text-white/40 text-[10px] font-bold mt-6 uppercase">Captura de pantalla para guardar</p>
     </div>
 
-    <div id="oracle" class="fixed inset-0 z-[100] hidden flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-6" onclick="this.classList.add('hidden')">
-        <div class="bg-white rounded-3xl p-8 max-w-xs w-full text-center shadow-2xl animate-pop">
-            <div class="text-5xl mb-4">🔮</div>
-            <p id="oracle-msg" class="text-lg font-bold text-slate-800 italic leading-tight">"..."</p>
-            <p class="text-[9px] font-black text-slate-300 mt-6 uppercase">Toca para cerrar</p>
-        </div>
-    </div>
-
-    <div id="level-modal" class="fixed inset-0 z-[100] hidden flex items-end sm:items-center justify-center bg-slate-900/60 backdrop-blur-sm" onclick="this.classList.add('hidden')">
-        <div class="bg-white rounded-t-3xl sm:rounded-3xl p-6 w-full max-w-md h-[80vh] sm:h-auto overflow-y-auto animate-pop shadow-2xl" onclick="event.stopPropagation()">
-            <div class="flex justify-between items-center mb-6 sticky top-0 bg-white z-20 pb-2 border-b border-slate-100">
-                <h2 class="text-xl font-black text-slate-800 uppercase italic">Tu Trayectoria</h2>
-                <button onclick="document.getElementById('level-modal').classList.add('hidden')" class="bg-slate-100 p-2 rounded-full text-slate-400 hover:bg-slate-200">✕</button>
-            </div>
-            <div id="ranks-list" class="pb-10"></div>
+    <div id="modal-setup" class="fixed inset-0 bg-white z-[400] hidden flex items-center justify-center p-8 text-center">
+        <div class="max-w-xs w-full">
+            <h1 class="text-3xl font-black mb-8 uppercase">Hola</h1>
+            <div onclick="cambiarAvatar()" class="w-24 h-24 bg-slate-100 rounded-[30px] mx-auto mb-6 flex items-center justify-center text-5xl cursor-pointer"><span id="setup-avatar">👶</span></div>
+            <input type="text" id="setup-name" placeholder="TU NOMBRE" class="w-full bg-slate-100 p-5 rounded-2xl font-black text-center uppercase mb-4 outline-none">
+            <button onclick="finishSetup()" class="btn-primary w-full py-5 text-sm uppercase">Empezar aventura</button>
         </div>
     </div>
 
     <script>
-        // --- DATA STORE ---
-        let db = JSON.parse(localStorage.getItem('algadi_universe_final')) || [];
-        // Profile ahora tiene un flag 'setupDone' o comprobamos si name existe
-        let profile = JSON.parse(localStorage.getItem('algadi_u_profile')) || { name: '', avatar: '👶', xp: 0 };
-        let r = 0;
-        let bfItems = [];
-        let setupAvatarIdx = 0;
+        // --- DATA ---
+        let db = JSON.parse(localStorage.getItem('algadi_db_v4')) || [];
+        let profile = JSON.parse(localStorage.getItem('algadi_prof_v4')) || { name: '', avatar: '👶', xp: 0, streak: 0 };
+        let currentRate = 0, currentPhoto = null, selectedBf = [];
 
-        // --- RPG CONSTANTS & COLORS ---
-        const AVATARS = ['👶', '🧑‍🍳', '🥔', '🦖', '👽', '👑', '🐷', '🧛', '👻', '🤖'];
-        
-        // Colores para el degradado de la barra (Hex colors)
-        // 0: Blue, 1: Indigo, 2: Emerald, 3: Amber, 4: Purple
+        // 1. Array con colores premium sincronizados
         const RANKS = [
-            {xp:0, t:"Colegial de nuevo ingreso", i:"👶", d:"Acabas de llegar, no sabes dónde está el baño.", c:"#3b82f6"}, 
-            {xp:150, t:"Colegial de segundo", i:"🎓", d:"Ya te sabes los trucos del comedor.", c:"#6366f1"}, 
-            {xp:400, t:"Colegial de tercero", i:"🕶️", d:"Veterano de mil batallas gastronómicas.", c:"#10b981"}, 
-            {xp:800, t:"Becado", i:"🎖️", d:"La élite del colegio mayor.", c:"#f59e0b"}, 
-            {xp:1500, t:"Germán", i:"⚡", d:"El Dios supremo del Algadi.", c:"#8b5cf6"}
+            { xp: 0, t: "Colegial de nuevo ingreso", c: "#2563eb", d: "Aún no distingues el lomo del pollo." },
+            { xp: 200, t: "Colegial de segundo", c: "#06b6d4", d: "Reconoces el olor del comedor a 100m." },
+            { xp: 600, t: "Colegial de tercero", c: "#8b5cf6", d: "Sabes cuándo toca paella sin mirar." },
+            { xp: 1200, t: "Colegial becado", c: "#f43f5e", d: "Los cocineros te saludan por tu nombre." },
+            { xp: 2500, t: "Germán", c: "#d97706", d: "Eres el dueño absoluto del comedor." }
         ];
 
-        // --- INIT ---
+        const AVATARS = ['👶', '🧑‍🍳', '🥔', '🦖', '👽', '👑', '🧛', '🦁', '🕵️', '🍕'];
+
+        // --- CORE ---
         function init() {
-            // Check if setup is needed
-            if (!profile.name || profile.name.trim() === '') {
-                document.getElementById('setup-modal').classList.remove('hidden');
-            } else {
-                updateUI();
-            }
+            if (!profile.name) document.getElementById('modal-setup').classList.remove('hidden');
+            else { updateUI(); renderBf(); runOracle(); }
         }
 
-        // --- SETUP LOGIC ---
-        function setupCycleAvatar() {
-            setupAvatarIdx = (setupAvatarIdx + 1) % AVATARS.length;
-            document.getElementById('setup-avatar-display').innerText = AVATARS[setupAvatarIdx];
+        function haptic(type) {
+            if(!navigator.vibrate) return;
+            if(type === 'soft') navigator.vibrate(10);
+            if(type === 'success') navigator.vibrate([40, 30, 40]);
+            if(type === 'alert') navigator.vibrate([200, 100, 200]);
         }
 
-        function finishSetup() {
-            const nameInput = document.getElementById('setup-name').value.trim();
-            if (!nameInput) return alert("¡Dime tu nombre!");
-            
-            profile.name = nameInput;
-            profile.avatar = AVATARS[setupAvatarIdx];
-            save();
-            
-            document.getElementById('setup-modal').classList.add('hidden');
-            updateUI();
+        function save() {
+            localStorage.setItem('algadi_db_v4', JSON.stringify(db));
+            localStorage.setItem('algadi_prof_v4', JSON.stringify(profile));
         }
 
-        // --- UI UPDATER WRAPPER ---
+        // --- UI & TABS ---
+        function setTab(t) {
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.getElementById('tab-' + t).classList.add('active');
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById('nav-' + t).classList.add('active');
+            haptic('soft');
+            if(t==='stats') renderStats();
+        }
+
         function updateUI() {
-            document.getElementById('profile-name-input').value = profile.name;
-            updateHeader();
+            const rIdx = getRankIdx(profile.xp);
+            const rank = RANKS[rIdx];
+            document.body.setAttribute('data-rank', rIdx);
+            document.getElementById('display-name').innerText = profile.name;
+            document.getElementById('p-name').value = profile.name;
+            document.getElementById('main-avatar').innerText = profile.avatar;
+            document.getElementById('p-avatar').innerText = profile.avatar;
+            document.getElementById('rank-name').innerText = rank.t;
+            document.getElementById('rank-name').style.color = rank.c;
+            document.getElementById('p-rank-label').innerText = rank.t;
+            document.getElementById('streak-val').innerText = profile.streak;
+            document.getElementById('st-total').innerText = db.length;
+            document.getElementById('st-xp').innerText = profile.xp;
+
+            const next = RANKS[rIdx+1];
+            const bar = document.getElementById('xp-bar');
+            if(next) {
+            const pct = ((profile.xp - rank.xp) / (next.xp - rank.xp)) * 100;
+            bar.style.width = pct + '%';
+            // Degradado dinámico entre el color actual y el siguiente
+            bar.style.background = `linear-gradient(90deg, ${rank.c}, ${next.c})`;
+            } else {
+            bar.style.width = '100%';
+            bar.style.background = rank.c;
+            }
+
+            // Buffs Visuales
+            const bBar = document.getElementById('buff-bar');
+            bBar.innerHTML = '';
+            const today = new Date().toDateString();
+            if(db.some(x => x.t.includes('Desayuno') && new Date(x.d).toDateString() === today)) {
+                bBar.innerHTML = '<div class="bg-blue-100 text-blue-600 px-2 py-1 rounded-lg text-[8px] font-black border border-blue-200 uppercase">⚡ Energía Desayuno ACTIVA</div>';
+            }
+
             renderHistory();
+            renderStats();
         }
 
-        // --- LEVELS MENU ---
-        function showLevelMenu() {
+        function getRankIdx(xp) {
+            for(let i = RANKS.length - 1; i >= 0; i--) { if(xp >= RANKS[i].xp) return i; }
+            return 0;
+        }
+
+        function openRankMenu() {
             const list = document.getElementById('ranks-list');
-            list.innerHTML = RANKS.map((rank, idx) => {
-                const isUnlocked = profile.xp >= rank.xp;
-                const isCurrent = isUnlocked && (RANKS[idx+1] ? profile.xp < RANKS[idx+1].xp : true);
+            const cIdx = getRankIdx(profile.xp);
+            list.innerHTML = RANKS.map((r, i) => {
+                let status = "locked";
+                if (i < cIdx) status = "unlocked";
+                else if (i === cIdx) status = "current";
                 
-                let stateClass = "locked";
-                if(isCurrent) stateClass = "current";
-                else if(isUnlocked) stateClass = "unlocked";
+                const nextRank = RANKS[i+1];
+                // Línea con degradado entre este rango y el siguiente
+                const lineStyle = (status !== "locked" && nextRank) 
+                    ? `background: linear-gradient(to bottom, ${r.c}, ${nextRank.c})` 
+                    : "";
+                
+                // Icono con su color de rango si está desbloqueado
+                const iconStyle = (status !== "locked")
+                    ? `background: ${r.c}; color: white; border-color: white; box-shadow: 0 4px 12px ${r.c}66;`
+                    : "";
 
                 return `
-                <div class="rank-item ${stateClass}">
-                    <div class="rank-line"></div>
-                    <div class="rank-icon">${rank.i}</div>
-                    <div class="rank-content">
-                        <div class="flex justify-between items-center mb-1">
-                            <h3 class="font-black text-sm uppercase text-slate-800">${rank.t}</h3>
-                            ${isCurrent ? '<span class="text-[8px] font-bold bg-emerald-500 text-white px-2 py-0.5 rounded-full">ACTUAL</span>' : ''}
+                    <div class="rank-item ${status}">
+                        <div class="rank-line" style="${lineStyle}"></div>
+                        <div class="rank-icon" style="${iconStyle}">${i + 1}</div>
+                        <div class="rank-content" style="${status === 'current' ? `border-color: ${r.c}; background: ${r.c}08;` : ''}">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="font-black text-[10px] uppercase" style="color:${status === 'locked' ? '#94a3b8' : r.c}">${r.t}</span>
+                                <span class="text-[9px] font-mono opacity-50">${r.xp} XP</span>
+                            </div>
+                            <p class="text-[9px] text-slate-500 leading-tight">${r.d}</p>
                         </div>
-                        <p class="text-xs text-slate-500 leading-tight mb-2">${rank.d}</p>
-                        <div class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">${rank.xp} XP REQUERIDOS</div>
                     </div>
-                </div>`;
+                `;
             }).join('');
-            
-            document.getElementById('level-modal').classList.remove('hidden');
+            document.getElementById('modal-ranks').classList.remove('hidden');
+            haptic('soft');
         }
 
-        // --- STAR RATING ---
-        function rate(val) {
-            r = (r === val) ? 0 : val;
-            for (let i = 1; i <= 5; i++) {
-                const el = document.getElementById(`star-${i}`);
-                if (i <= r) el.classList.add('active');
-                else el.classList.remove('active');
-            }
-            if (navigator.vibrate) navigator.vibrate(10);
-        }
-
-        // --- CORE FUNCTIONS ---
-        function toggleForm() {
-            const t = document.getElementById('turno').value;
-            const isBf = t === '☕ Desayuno';
+        // --- REGISTRO ---
+        function toggleTurno() {
+            const isBf = document.getElementById('turno').value.includes('Desayuno');
             document.getElementById('form-comida').classList.toggle('hidden', isBf);
             document.getElementById('form-desayuno').classList.toggle('hidden', !isBf);
-            bfItems = []; document.querySelectorAll('.breakfast-btn').forEach(b=>b.classList.remove('selected'));
+            selectedBf = []; renderBf();
         }
 
-        function toggleItem(btn, item) {
-            btn.classList.toggle('selected');
-            bfItems.includes(item) ? bfItems=bfItems.filter(i=>i!==item) : bfItems.push(item);
-            if (navigator.vibrate) navigator.vibrate(10);
+        function renderBf() {
+            const items = ['☕ Café', '🍫 Colacao', '🍞 Tostada', '🥐 Napolitana','🍩 Bollería', '🥯 Sandwich', '🍊 Zumo de naranja','🍍 Zumo de piña','🥣 Cereales'];
+            document.getElementById('form-desayuno').innerHTML = items.map(it => `
+                <button onclick="toggleBfItem(this, '${it}')" class="bf-btn">${it}</button>
+            `).join('');
         }
+
+        function toggleBfItem(btn, it) {
+            btn.classList.toggle('selected');
+            if(selectedBf.includes(it)) selectedBf = selectedBf.filter(x => x !== it);
+            else selectedBf.push(it);
+            haptic('soft');
+        }
+
+        function setRate(n) {
+            currentRate = (currentRate === n) ? 0 : n;
+            const stars = document.querySelectorAll('#star-rating span');
+            stars.forEach((s, i) => s.style.color = (i < currentRate) ? '#fbbf24' : '#e2e8f0');
+            haptic('soft');
+        }
+
+        function handlePhoto(e) {
+            const file = e.target.files[0];
+            if(!file) return;
+            const r = new FileReader();
+            r.onload = (ev) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const MAX = 400;
+                    const scale = MAX / img.width;
+                    canvas.width = MAX; canvas.height = img.height * scale;
+                    canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+                    currentPhoto = canvas.toDataURL('image/jpeg', 0.7);
+                    document.getElementById('photo-img').src = currentPhoto;
+                    document.getElementById('photo-preview-box').classList.remove('hidden');
+                };
+                img.src = ev.target.result;
+            };
+            r.readAsDataURL(file);
+        }
+
+        function clearPhoto() { currentPhoto = null; document.getElementById('photo-preview-box').classList.add('hidden'); }
 
         function guardar() {
             const turno = document.getElementById('turno').value;
-            let p1, p2, g, po, xpAdd = 10;
+            let p1, p2, g, po, xp = 10;
 
             if(turno.includes('Desayuno')) {
-                if(bfItems.length===0) return alert("Selecciona algo!");
-                p1="DESAYUNO"; p2=bfItems.join(', '); g="NADA"; po="NADA"; xpAdd=5;
+                if(selectedBf.length === 0) return alert("¿Qué has desayunado?");
+                p1 = "DESAYUNO"; p2 = selectedBf.join(', '); g = "NADA"; po = "NADA"; xp = 5;
             } else {
-                p1 = val('primero'); p2 = val('segundo'); g = document.getElementById('guarnicion').value||"NADA"; po = val('postre')||"NADA";
-                if(p1==="NADA" && p2==="NADA") return alert("Platos vacíos");
-                xpAdd = turno.includes('Cena') ? 15 : 10;
+                p1 = document.getElementById('p1').value.toUpperCase() || "NADA";
+                p2 = document.getElementById('p2').value.toUpperCase() || "NADA";
+                g = document.getElementById('guarnicion').value;
+                po = document.getElementById('postre').value.toUpperCase() || "NADA";
+                if(p1 === "NADA" && p2 === "NADA") return alert("¿Plato vacío?");
+                if(turno.includes('Cena')) xp = 15;
             }
 
-            db.unshift({ id: Date.now(), t: turno, p1, p2, g, po, r, d: new Date().toISOString() });
-            profile.xp += xpAdd;
+            db.unshift({ id: Date.now(), t: turno, p1, p2, g, po, r: currentRate, img: currentPhoto, d: new Date().toISOString() });
             
-            save();
-            showOracle();
+            const today = new Date().toDateString();
+            const last = db[1] ? new Date(db[1].d).toDateString() : null;
+            if(today !== last) profile.streak++;
             
-            document.getElementById('primero').value=""; document.getElementById('segundo').value=""; document.getElementById('postre').value="";
-            bfItems=[]; document.querySelectorAll('.breakfast-btn').forEach(b=>b.classList.remove('selected'));
-            rate(0);
-            
-            if (navigator.vibrate) navigator.vibrate([50,50]);
+            profile.xp += xp; save(); haptic('success');
+            confetti({ particleCount: 50, spread: 60, origin: { y: 0.8 } });
+
+            // Reset
+            document.getElementById('p1').value = ""; document.getElementById('p2').value = "";
+            clearPhoto(); setRate(0); selectedBf = []; renderBf();
+            updateUI(); runOracle();
         }
 
-        function val(id) { return document.getElementById(id).value.toUpperCase().trim() || "NADA"; }
-        
-        function save() {
-            localStorage.setItem('algadi_universe_final', JSON.stringify(db));
-            localStorage.setItem('algadi_u_profile', JSON.stringify(profile));
-            updateUI();
+        function importar(e) {
+            const reader = new FileReader();
+            reader.onload = (evt) => {
+                try {
+                    // Soporta el formato con encabezado "Backup Algadi" o JSON puro
+                    const content = evt.target.result;
+                    const jsonPart = content.includes('\n') ? content.split('\n')[1] : content;
+                    const raw = JSON.parse(jsonPart);
+                    
+                    if (raw.db && raw.profile) {
+                        db = raw.db; 
+                        profile = raw.profile;
+                        save(); 
+                        location.reload();
+                    } else {
+                        throw new Error();
+                    }
+                } catch(err) { 
+                    alert("Archivo de backup no válido"); 
+                }
+            };
+            if(e.target.files[0]) reader.readAsText(e.target.files[0]);
         }
 
-        // --- UI UPDATES & GRADIENT BAR ---
-        function updateHeader() {
-            // Determinar Rango Actual y Siguiente
-            let currentRankIndex = 0;
-            for(let i=0; i<RANKS.length; i++) {
-                if(profile.xp >= RANKS[i].xp) currentRankIndex = i;
-            }
-            
-            const currentRank = RANKS[currentRankIndex];
-            const nextRank = RANKS[currentRankIndex + 1]; // Undefined si es max lvl
-            
-            // Calculo Porcentaje
-            let pct = 0;
-            if (nextRank) {
-                // XP relativa al nivel actual
-                const xpInLevel = profile.xp - currentRank.xp;
-                const levelSpan = nextRank.xp - currentRank.xp;
-                pct = Math.min(100, Math.max(0, (xpInLevel / levelSpan) * 100));
-            } else {
-                pct = 100; // Nivel Maximo
-            }
-
-            // Aplicar Textos
-            document.getElementById('header-name').innerText = profile.name;
-            document.getElementById('header-avatar').innerText = profile.avatar;
-            document.getElementById('profile-avatar-display').innerText = profile.avatar;
-            document.getElementById('header-lvl').innerText = `LVL ${currentRankIndex + 1}`;
-            
-            // Aplicar Barra y Gradiente
-            const bar = document.getElementById('header-xp');
-            bar.style.width = `${pct}%`;
-            
-            // Gradiente: Color actual -> Color siguiente
-            const c1 = currentRank.c;
-            const c2 = nextRank ? nextRank.c : currentRank.c; // Si max lvl, color solido
-            bar.style.background = `linear-gradient(90deg, ${c1}, ${c2})`;
-        }
-
-        function renderHistory() {
-            const el = document.getElementById('historial');
-            if(db.length===0) { el.innerHTML='<div class="text-center py-10 opacity-30 text-xs font-bold uppercase">Sin tickets</div>'; return; }
-            
-            el.innerHTML = db.map(i => {
-                const color = i.r>=4 ? '#10b981' : (i.r<=2 ? '#ef4444' : '#f59e0b');
-                const starDisplay = i.r > 0 ? `<span class="font-black" style="color:${color}">${'★'.repeat(i.r)}</span>` : '<span class="text-slate-300 text-[9px] font-bold">SIN NOTA</span>';
-                const isBf = i.t.includes('Desayuno');
-                
-                return `
-                <div class="ticket p-4 rounded-xl border border-slate-100">
-                    <div class="flex justify-between items-center mb-2 border-b border-dashed border-slate-200 pb-2">
-                        <span class="text-[9px] font-mono text-slate-400">#${i.id.toString().slice(-4)}</span>
-                        <span class="text-[9px] font-mono text-slate-400">${new Date(i.d).toLocaleDateString()}</span>
-                    </div>
-                    <div class="flex justify-between items-start mb-2">
-                        <span class="text-[9px] font-black uppercase bg-slate-100 text-slate-600 px-2 rounded">${i.t}</span>
-                        ${starDisplay}
-                    </div>
-                    <div class="space-y-1 text-xs text-slate-600 font-mono">
-                        ${isBf ? `<div class="font-bold">${i.p2}</div>` : `
-                        <div class="flex justify-between"><span>1. ${i.p1.substring(0,18)}</span></div>
-                        <div class="flex justify-between font-bold text-slate-800"><span>2. ${i.p2.substring(0,18)}</span></div>
-                        ${i.g!=='NADA'?`<div class="text-[10px] text-slate-400 pl-4">+ ${i.g}</div>`:''}
-                        ${i.po!=='NADA'?`<div class="mt-1 pt-1 border-t border-slate-50 text-[9px]">🍰 ${i.po}</div>`:''}
-                        `}
-                    </div>
-                    <button onclick="del(${i.id})" class="absolute top-2 right-2 text-red-300 hover:text-red-500 font-bold px-2">×</button>
-                </div>`;
-            }).join('');
-        }
-
+        // --- STATS & LOGROS ---
         function renderStats() {
-            // Patatómetro
-            const meals = db.filter(x => !x.t.includes('Desayuno'));
-            const patatas = meals.filter(x => x.g.includes('PATATA') || x.p1.includes('PATATA') || x.p2.includes('PATATA')).length;
-            const pct = meals.length ? Math.round((patatas/meals.length)*100) : 0;
-            
-            document.getElementById('patata-val').innerText = pct;
-            document.getElementById('patata-bar').style.width = `${pct}%`;
-            
-            const face = document.getElementById('patata-face');
-            if(pct > 70) { face.innerText = "🥔🔥"; face.classList.add('potato-danger'); } 
-            else { face.innerText = "🥔"; face.classList.remove('potato-danger'); }
-
-            // Badges Pro Logic
-            const cafes = db.filter(x => x.p2.includes('Café')).length;
-            const lomos = db.filter(x => x.p2.includes('LOMO') || x.p1.includes('LOMO')).length;
-            
+           // Patatómetro (Diseño clásico con alarma conservada)
+        const meals = db.filter(x => !x.t.includes('Desayuno'));
+        const patatas = meals.filter(x => x.g.includes('PATATA') || x.p1.includes('PATATA') || x.p2.includes('PATATA')).length;
+        const pct = meals.length ? Math.round((patatas/meals.length)*100) : 0;
+        
+        document.getElementById('patata-val').innerText = pct;
+        document.getElementById('patata-bar').style.width = `${pct}%`;
+        
+        const card = document.getElementById('patata-card');
+        const face = document.getElementById('patata-face');
+        
+        if(pct > 70) { 
+            face.innerText = "🥔🔥"; 
+            card.classList.add('danger-potato'); // Mantiene la animación de la alarma
+            document.getElementById('patata-warn').classList.remove('hidden');
+            haptic('alert');
+        } else { 
+            face.innerText = "🥔"; 
+            card.classList.remove('danger-potato');
+            document.getElementById('patata-warn').classList.add('hidden');
+        }
+            // Lógica de Logros (Badges)
             const badges = [
-                { id:1, t:"Primer Trauma", d:"Registra 1 comida", cur: db.length, max:1, i:"🌮" },
-                { id:2, t:"Buenos días", d:"100 Cafés bebidos", cur: cafes, max:100, i:"☕" },
-                { id:3, t:"Mr. Potato", d:"70% Dieta Patata", cur: pct, max:70, i:"🥔" },
-                { id:4, t:"Adobado", d:"20 Lomos comidos", cur: lomos, max:20, i:"🥩" },
-                { id:5, t:"Algadi Premium", d:"Pon un 5 estrellas", cur: db.some(x=>x.r===5)?1:0, max:1, i:"⭐" },
-                { id:6, t:"Superviviente", d:"Pon un 1 estrella", cur: db.some(x=>x.r===1)?1:0, max:1, i:"🤢" }
+                { id:1, t:"Pionero", d:"Primer registro", cur: db.length, max:1, i:"🌮" },
+                { id:2, t:"Mr. Patata", d:"80% de patata", cur: pct >= 80 ? 1 : 0, max:1, i:"🥔" },
+                { id:3, t:"Gourmet", d:"5 críticas de 5★", cur: db.filter(x=>x.r===5).length, max:5, i:"⭐" },
+                { id:4, t:"Excelencia", d:"10 críticas de 5★", cur: db.filter(x=>x.r===5).length, max:10, i:"💎" },
+                { id:5, t:"Crítico Feroz", d:"10 críticas de 1★", cur: db.filter(x=>x.r===1).length, max:10, i:"🤬" },
+                { id:6, t:"Cafeinómano", d:"Superar 100 cafés", cur: db.filter(x => x.p2.includes('☕ Café')).length, max:100, i:"☕" },
+                { id:7, t:"Constante", d:"Racha de 7 días", cur: profile.streak, max:7, i:"🔥" },
+                { id:8, t:"Noctámbulo", d:"50 cenas registradas", cur: db.filter(x=>x.t.includes('Cena')).length, max:50, i:"🌙" },
+                { id:9, t:"Equilibrado", d:"10 ensaladas de guarnición", cur: db.filter(x=>x.g.includes('🥗 ENSALADA')).length, max:10, i:"🥗" },
+                { id:10, t:"Madrugador", d:"20 desayunos registrados", cur: db.filter(x=>x.t.includes('Desayuno')).length, max:20, i:"🌅" }
             ];
 
-            document.getElementById('badges-grid').innerHTML = badges.map(b => {
+            document.getElementById('achievements-grid').innerHTML = badges.map(b => {
                 const unlocked = b.cur >= b.max;
                 const progress = Math.min(100, (b.cur/b.max)*100);
-                const displayCur = unlocked ? b.max : b.cur;
-                
                 return `
                 <div class="badge-card ${unlocked ? 'unlocked' : 'locked'}">
                     <div class="flex justify-between items-start">
                         <span class="text-2xl">${b.i}</span>
-                        ${unlocked ? '<span class="text-emerald-500 font-bold text-xs">✅</span>' : ''}
+                        ${unlocked ? '<span class="text-blue-500 material-icons-round text-sm">verified</span>' : ''}
                     </div>
-                    <div>
-                        <p class="font-black text-[10px] uppercase text-slate-800">${b.t}</p>
-                        <p class="text-[9px] text-slate-400 leading-tight">${b.d}</p>
+                    <div class="mt-2">
+                        <p class="font-black text-[10px] uppercase">${b.t}</p>
+                        <p class="text-[8px] text-slate-400 opacity-60 leading-tight">${b.d}</p>
                     </div>
-                    <div class="mt-auto">
-                        <div class="flex justify-between text-[8px] font-bold text-slate-400 mb-1">
-                            <span>${unlocked ? 'COMPLETADO' : 'PROGRESO'}</span>
-                            <span>${displayCur}/${b.max}</span>
-                        </div>
-                        <div class="progress-track"><div class="progress-fill" style="width:${progress}%"></div></div>
-                    </div>
+                    <div class="badge-progress"><div class="badge-bar" style="width:${progress}%"></div></div>
                 </div>`;
             }).join('');
         }
 
-        // --- UTILS & PROFILE ---
-        function cycleAvatar() {
-            let idx = AVATARS.indexOf(profile.avatar);
-            profile.avatar = AVATARS[(idx + 1) % AVATARS.length];
-            save();
+        function runOracle() {
+            const msg = document.getElementById('oracle-msg');
+            if(db.length < 3) { msg.innerText = "Necesito al menos 3 registros para ver tu futuro..."; return; }
+            const counts = {};
+            db.forEach(x => { if(x.p2 !== 'NADA' && !x.t.includes('Desayuno')) counts[x.p2] = (counts[x.p2]||0)+1; });
+            const sorted = Object.entries(counts).sort((a,b)=>b[1]-a[1]);
+            if(sorted.length > 0) {
+                const prob = Math.floor(Math.random() * 20) + 70;
+                msg.innerText = `Hay un ${prob}% de probabilidad de que hoy el plato estrella sea ${sorted[0][0]}.`;
+            } else msg.innerText = "El futuro es incierto, hoy comerás lo que el destino dicte.";
         }
-        function saveProfile() { profile.name = document.getElementById('profile-name-input').value; save(); }
-        function showOracle() {
-            const m = ["La patata te observa.", "Indigestión inminente.", "Recibes 1 indigestión por participar en esta actividad", "9 de cada 10 mecánicos recomiendan los san aceites", "¿Otra vez lomo?", "Algadio Rodríguez aprueba esto"];
-            document.getElementById('oracle-msg').innerText = m[Math.floor(Math.random()*m.length)];
-            document.getElementById('oracle').classList.remove('hidden');
+
+        function buscar(q) {
+            const res = document.getElementById('search-results');
+            if(q.length < 2) { res.classList.add('hidden'); return; }
+            const matches = db.filter(x => (x.p1+x.p2).includes(q.toUpperCase()));
+            if(matches.length === 0) res.innerHTML = '<p class="text-center text-[10px] opacity-40">SIN RESULTADOS</p>';
+            else {
+                const avg = (matches.reduce((a, b) => a + b.r, 0) / matches.length).toFixed(1);
+                res.innerHTML = `<div class="bg-white p-4 rounded-2xl border-2 border-slate-100"><div class="flex justify-between items-end"><span class="text-xl font-black">${matches.length} <span class="text-[10px] opacity-30 uppercase">VECES</span></span><span class="text-yellow-500 font-black">★ ${avg}</span></div></div>`;
+            }
+            res.classList.remove('hidden');
         }
-        function switchTab(t) {
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            document.getElementById(`tab-${t}`).classList.add('active');
-            document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
-            document.getElementById(`nav-${t}`).classList.add('active');
-            if(t==='stats') renderStats();
+
+        // --- EXTRAS ---
+        function renderHistory() {
+            const el = document.getElementById('historial');
+            if(db.length === 0) { el.innerHTML = '<p class="text-center py-10 opacity-20 text-xs font-black">VACÍO</p>'; return; }
+            el.innerHTML = db.slice(0, 10).map(i => `
+                <div class="glass p-4 flex gap-4 items-center">
+                    ${i.img ? `<img src="${i.img}" class="w-16 h-16 rounded-xl object-cover shadow-sm">` : `<div class="w-16 h-16 bg-slate-50 rounded-xl flex items-center justify-center text-[10px] opacity-20 font-black">S/F</div>`}
+                    <div class="flex-1">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="text-[8px] font-black text-slate-300 uppercase">${i.t}</span>
+                            <span class="text-yellow-500 text-[10px]">${'★'.repeat(i.r)}</span>
+                        </div>
+                        <p class="text-[11px] font-black text-slate-700 leading-tight">${i.t.includes('Desayuno') ? i.p2 : i.p1}</p>
+                        ${!i.t.includes('Desayuno') ? `<p class="text-[9px] font-bold text-slate-400 uppercase">${i.p2}</p>` : ''}
+                    </div>
+                    <button onclick="borrar(${i.id})" class="text-slate-200"><span class="material-icons-round">delete</span></button>
+                </div>
+            `).join('');
         }
-        function del(id) { if(confirm("¿Borrar?")) { db=db.filter(x=>x.id!==id); save(); } }
-        function nuke() { if(confirm("¿Borrar TODO?")) { localStorage.removeItem('algadi_universe_final'); localStorage.removeItem('algadi_u_profile'); location.reload(); } }
-        
-        // CSV
-        function exportCSV() {
-            let csv = "Turno,1o,2o,Guarnicion,Postre,Rating,Fecha\n" + db.map(i => `"${i.t}","${i.p1}","${i.p2}","${i.g}","${i.po}",${i.r},"${i.d}"`).join("\n");
-            let a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv],{type:'text/csv'})); a.download = 'algadi_universe.csv'; a.click();
+
+        function generarCarta() {
+            const rIdx = getRankIdx(profile.xp);
+            const meals = db.filter(x => !x.t.includes('Desayuno'));
+            const pCount = meals.filter(x => (x.g+x.p1+x.p2).includes('PATATA')).length;
+            const pct = meals.length ? Math.round((pCount/meals.length)*100) : 0;
+            document.getElementById('c-avatar').innerText = profile.avatar;
+            document.getElementById('c-name').innerText = profile.name;
+            document.getElementById('c-rank').innerText = RANKS[rIdx].t;
+            document.getElementById('c-streak').innerText = profile.streak;
+            document.getElementById('c-xp').innerText = profile.xp;
+            document.getElementById('c-patata').innerText = pct + '%';
+            document.getElementById('modal-card').classList.remove('hidden');
+            haptic('success');
         }
-        function importCSV(e) {
-            const r = new FileReader();
-            r.onload = (evt) => {
-                let lines = evt.target.result.split('\n').slice(1);
-                db = [...db, ...lines.filter(l=>l.trim()).map(l => {
-                    const [t,p1,p2,g,po,r,d] = l.split(',').map(s=>s.replace(/"/g,''));
-                    return {id:Date.now()+Math.random(),t,p1,p2,g,po,r:parseInt(r),d};
-                })]; save();
-            }; r.readAsText(e.target.files[0]);
+
+        function cambiarAvatar() {
+            const cur = AVATARS.indexOf(profile.avatar);
+            profile.avatar = AVATARS[(cur + 1) % AVATARS.length];
+            document.getElementById('setup-avatar').innerText = profile.avatar;
+            save(); updateUI(); haptic('soft');
+        }
+
+        function finishSetup() {
+            const n = document.getElementById('setup-name').value;
+            if(!n) return alert("Dime tu nombre");
+            profile.name = n.toUpperCase();
+            profile.avatar = document.getElementById('setup-avatar').innerText;
+            save(); document.getElementById('modal-setup').classList.add('hidden'); init();
+        }
+
+        function saveProfileName() { profile.name = document.getElementById('p-name').value.toUpperCase(); save(); updateUI(); }
+        function borrar(id) { if(confirm("¿Borrar ticket?")) { db = db.filter(x => x.id !== id); save(); updateUI(); } }
+        function nuke() { if(confirm("⚠️ ¿BORRAR TODO?")) { localStorage.clear(); location.reload(); } }
+        function exportar() {
+            const blob = new Blob(["Backup Algadi\n" + JSON.stringify({ db, profile })], { type: 'text/plain' });
+            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'algadi_backup.json'; a.click();
         }
 
         init();
